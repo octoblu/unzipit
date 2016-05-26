@@ -1,0 +1,13 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/bradfitz/iter",
+			"repository": "https://github.com/bradfitz/iter",
+			"vcs": "git",
+			"revision": "454541ec3da2a73fc34fd049b19ee5777bf19345",
+			"branch": "master",
+			"notests": true
+		}
+	]
+}

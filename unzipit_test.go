@@ -16,6 +16,7 @@ import (
 	"reflect"
 	"runtime"
 	"testing"
+
 	"github.com/bradfitz/iter"
 )
 
@@ -294,11 +295,11 @@ func calcNumberOfFiles(t *testing.T, searchDir string) int {
 	fileList := []string{}
 
 	err := filepath.Walk(searchDir, func(path string, f os.FileInfo, err error) error {
-			if !f.IsDir() {
-				fileList = append(fileList, path)
-			}
-			return nil
-		})
+		if !f.IsDir() {
+			fileList = append(fileList, path)
+		}
+		return nil
+	})
 
 	if err != nil {
 		t.FailNow()
