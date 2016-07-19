@@ -60,6 +60,7 @@ func TestUnpack(t *testing.T) {
 		{"./fixtures/cfgdrv.iso", 1},
 		{"./fixtures/test2.tar.gz", 4},
 		{"./fixtures/tar-without-directory-entries.tar.gz", 1},
+		{"./fixtures/test-with-symlink.tar.gz", 2},
 	}
 
 	for _, test := range tests {
@@ -177,6 +178,24 @@ func TestUntar(t *testing.T) {
 	ok(t, err)
 }
 
+func TestUnpackTarGZWithSymlink(t *testing.T) {
+	file, err := os.Open("./fixtures/test-with-symlink.tar.gz")
+	ok(t, err)
+
+	// Create temporary directory to extract to
+	destDir, err := ioutil.TempDir(os.TempDir(), "ja-tuj")
+	ok(t, err)
+	defer os.RemoveAll(destDir)
+
+	archDir, err := UnpackStream(file, destDir)
+	ok(t, err)
+
+	info, err := os.Lstat(filepath.Join(archDir, "bin/link"))
+	ok(t, err)
+
+	assert(t, info.Mode()&os.ModeSymlink == os.ModeSymlink, fmt.Sprintf("%v is not a symlink", info.Mode()))
+}
+
 func TestUntarOpenFileResourceLeak(t *testing.T) {
 	// Create a buffer to write our archive to.
 	buf := new(bytes.Buffer)
@@ -250,11 +269,11 @@ func TestUnzipOpenFileResourceLeak(t *testing.T) {
 	}
 
 	for _, file := range files {
-		f, err := zw.Create(file.Name)
-		ok(t, err)
+		f, fileErr := zw.Create(file.Name)
+		ok(t, fileErr)
 
-		_, err = f.Write([]byte(file.Body))
-		ok(t, err)
+		_, fileErr = f.Write([]byte(file.Body))
+		ok(t, fileErr)
 	}
 
 	// Make sure to check the error on Close.
